@@ -48,3 +48,29 @@ class TestConfigParser(unittest.TestCase):
         self.config_parser.declare_constant('let nested_languages = #("en", #("fr", "de"))')
         self.assertEqual(self.config_parser.constants['nested_languages'], ['en', ['fr', 'de']])
 
+    def test_declare_mixed_constants(self):
+        config_lines = [
+            'let max_retries = 3',
+            'let is_active = true',
+            'let greeting = "Hello"',
+            'let languages = #("en", "fr", "de")'
+        ]
+        for line in config_lines:
+            self.config_parser.declare_constant(line)
+
+        self.assertEqual(self.config_parser.constants['max_retries'], 3)
+        self.assertEqual(self.config_parser.constants['is_active'], True)
+        self.assertEqual(self.config_parser.constants['greeting'], "Hello")
+        self.assertEqual(self.config_parser.constants['languages'], ['en', 'fr', 'de'])
+
+    def test_empty_array(self):
+        self.config_parser.declare_constant('let empty_list = #()')
+        self.assertEqual(self.config_parser.constants['empty_list'], [])
+
+    def test_special_characters_in_string(self):
+        self.config_parser.declare_constant('let file_path = "C:\\Program Files\\App"')
+        self.assertEqual(self.config_parser.constants['file_path'], "C:\\Program Files\\App")
+
+
+if __name__ == '__main__':
+    unittest.main()

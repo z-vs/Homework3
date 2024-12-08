@@ -62,3 +62,30 @@ class ConfigParser:
         raise ValueError(f"Недопустимое выражение: '{expr}'")
 
 
+def main():
+    output_file = 'output.json'
+
+    config_lines = []
+    print("Введите вашу конфигурацию (нажмите Enter на пустой строке, чтобы закончить ввод):")
+
+    while True:
+        line = input()
+        if line.strip() == "":
+            break
+        config_lines.append(line)
+
+    config = '\n'.join(config_lines)
+
+    config_parser = ConfigParser()
+    for line in config.splitlines():
+        line = line.strip()
+        if line:
+            config_parser.declare_constant(line)
+
+    result = config_parser.constants
+
+    with open(output_file, 'w', encoding='utf-8') as json_file:
+        json.dump(result, json_file, ensure_ascii=False, indent=4)
+
+if __name__ == "__main__":
+    main()

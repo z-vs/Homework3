@@ -29,4 +29,22 @@ class TestConfigParser(unittest.TestCase):
         self.assertEqual(self.config_parser.constants['greeting'], "Hello, World!")
         self.assertEqual(self.config_parser.constants['language'], "Python")
 
+    def test_declare_array_constants(self):
+        self.config_parser.declare_constant('let languages = #("en", "es", "fr")')
+
+        self.assertEqual(self.config_parser.constants['languages'], ['en', 'es', 'fr'])
+
+    def test_invalid_syntax(self):
+        with self.assertRaises(ValueError):
+            self.config_parser.declare_constant('let x = !!')
+
+        with self.assertRaises(ValueError):
+            self.config_parser.declare_constant('let y = 123abc')
+
+    def test_handle_empty_config(self):
+        self.assertEqual(self.config_parser.constants, {})
+
+    def test_nested_arrays(self):
+        self.config_parser.declare_constant('let nested_languages = #("en", #("fr", "de"))')
+        self.assertEqual(self.config_parser.constants['nested_languages'], ['en', ['fr', 'de']])
 

@@ -18,16 +18,16 @@ class ConfigParser:
             raise ValueError(f"Некорректная строка: '{line}'")
 
     def evaluate_expression(self, expr):
-        # Обработка обращения к константам
+
         expr = self.replace_constants(expr).strip()
 
-        # Проверка на булевы значения
+
         if expr.lower() == 'true':
             return True
         elif expr.lower() == 'false':
             return False
 
-        # Обработка чисел и строк
+
         if expr.startswith('"') and expr.endswith('"'):
             return expr[1:-1]
 
@@ -38,7 +38,7 @@ class ConfigParser:
             items = [self.evaluate_expression(item.strip()) for item in inner_values.split(',')]
             return items
 
-        # Пробуем привести выражение к числу или вычислить
+
         try:
             return eval(expr, {}, self.constants)
         except NameError:
@@ -47,14 +47,14 @@ class ConfigParser:
             raise ValueError(f"Ошибка при вычислении: '{expr}' - {str(e)}")
 
     def replace_constants(self, expr):
-        # Заменяем каждое вхождение @{имя} на соответствующее значение константы
+
         def replacement(match):
             const_name = match.group(1)
             if const_name in self.constants:
                 return str(self.constants[const_name])
             raise ValueError(f"Константа '{const_name}' не объявлена.")
 
-        # Сначала заменим обращения к константам
+
         expr = re.sub(r'@\{(\w+)\}', replacement, expr)
 
         return expr
